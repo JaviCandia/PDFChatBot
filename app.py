@@ -8,14 +8,14 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains.question_answering import load_qa_chain
 
 # Configuración de la página de la aplicación Streamlit
-st.set_page_config('preguntaDOC')
-st.header("Pregunta a tu PDF")
+st.set_page_config('PDFChatBot')
+st.header("Ask questions about your PDF")
 
 # Campo para ingresar la API Key de OpenAI
 OPENAI_API_KEY = st.text_input('OpenAI API Key', type='password')
 
 # Campo para subir un archivo PDF
-pdf_obj = st.file_uploader("Carga tu documento", type="pdf", on_change=st.cache_resource.clear)
+pdf_obj = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
 
 @st.cache_resource
 def create_embeddings(pdf):
@@ -47,7 +47,7 @@ if pdf_obj:
     # Crea la base de conocimiento a partir del PDF
     knowledge_base = create_embeddings(pdf_obj)
     # Campo para ingresar la pregunta del usuario
-    user_question = st.text_input("Haz una pregunta sobre tu PDF:")
+    user_question = st.text_input("Ask something about your PDF:")
 
     if user_question:
         # Establece la API Key de OpenAI en el entorno
