@@ -47,7 +47,7 @@ if pdf_obj:
     # Crea la base de conocimiento a partir del PDF
     knowledge_base = create_embeddings(pdf_obj)
     # Campo para ingresar la pregunta del usuario
-    user_question = st.text_input("Ask something about your PDF:")
+    user_question = st.text_area("Ask something about your PDF:")
 
     if user_question:
         # Establece la API Key de OpenAI en el entorno
