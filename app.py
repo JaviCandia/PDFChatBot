@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings 
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 from langchain.chains.question_answering import load_qa_chain
@@ -21,12 +21,10 @@ pdf_obj = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_res
 def create_embeddings(pdf):
     # Lee el PDF y extrae el texto
     pdf_reader = PdfReader(pdf)
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
+    text = "".join(page.extract_text() for page in pdf_reader.pages)
 
     # Filtro de contenido: eliminar líneas en blanco 
-    text = "\n".join([line for line in text.split("\n") if line.strip() != ""])
+    text = "\n".join(line for line in text.split("\n") if line.strip())
 
     # Divide el texto en chunks (trozos) más pequeños
     text_splitter = RecursiveCharacterTextSplitter(
@@ -44,22 +42,15 @@ def create_embeddings(pdf):
 
 # Si se sube un archivo PDF
 if pdf_obj:
-    # Crea la base de conocimiento a partir del PDF
     knowledge_base = create_embeddings(pdf_obj)
-    # Campo para ingresar la pregunta del usuario
     user_question = st.text_area("Ask something about your PDF:")
 
     if user_question:
-        # Establece la API Key de OpenAI en el entorno
         os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-        # Busca en la base de conocimiento los documentos más similares a la pregunta del usuario
         docs = knowledge_base.similarity_search(user_question, 3)
-        # Configura el modelo de lenguaje de OpenAI
+
         llm = ChatOpenAI(model_name='gpt-3.5-turbo')
-        # Carga la cadena de preguntas y respuestas
         chain = load_qa_chain(llm, chain_type="stuff")
-        # Ejecuta la cadena de QA con los documentos relevantes y la pregunta del usuario
         respuesta = chain.run(input_documents=docs, question=user_question)
 
-        # Muestra la respuesta en la aplicación
         st.write(respuesta)
