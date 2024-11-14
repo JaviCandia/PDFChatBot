@@ -1,13 +1,25 @@
-# Ignorar la carpeta del entorno virtual
+# Virtual environments
+env/
 venv/
+ENV/
+.venv/
+.ENV/
 
-# Ignorar archivos específicos del sistema
-*.pyc
+# Environment variable files
+*.env
+
+# Compiled files
 __pycache__/
+*.py[cod]
+*$py.class
 
-# Ignorar archivos de configuración del editor
+# Logs
+*.log
+
+# IDE directories
 .idea/
 .vscode/
 
-# Ignorar archivos de logs
-*.log
+# System files
+.DS_Store
+*.swp
