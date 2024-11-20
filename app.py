@@ -15,6 +15,10 @@ load_dotenv()
 st.set_page_config('PDFChatBot')
 st.header("Ask questions about your PDF")
 
+# Initialize global embeddings model 
+if 'embeddings' not in st.session_state: 
+    st.session_state.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+
 # Upload a PDF file
 pdf_obj = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
 
@@ -36,8 +40,7 @@ def create_embeddings(pdf):
     chunks = text_splitter.split_text(text)
 
     # Create embeddings using the specified model from HuggingFace
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-    knowledge_base = FAISS.from_texts(chunks, embeddings)
+    knowledge_base = FAISS.from_texts(chunks, st.session_state.embeddings)
 
     return knowledge_base
 
