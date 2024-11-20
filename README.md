@@ -50,4 +50,5 @@ OPENAI_API_KEY=your_openai_api_key
 1. Open the application in your browser (usually at http://localhost:8501).
 2. Upload the PDF file you want to ask questions about.
 3. Type your question in the text field and get responses based on the content of the PDF.
+
 ![alt text](assets/image.png)
