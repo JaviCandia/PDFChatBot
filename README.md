@@ -1,4 +1,4 @@
-# Streamlit PDF Chat Application
+# Streamlit | PDF Chat Application
 
 This project is created as a learning exercise, utilizing **LangChain** and **Streamlit**. The application allows you to upload a PDF file and ask questions about its content, using the OpenAI API to provide responses.
 
