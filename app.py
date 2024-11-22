@@ -23,6 +23,14 @@ if 'embedding_model' not in st.session_state:
 if 'knowledge_base' not in st.session_state:
     st.session_state.knowledge_base = None
 
+# Preinitialize the LLM
+if 'llm' not in st.session_state:
+    st.session_state.llm = ChatOpenAI(model_name='gpt-3.5-turbo')
+
+# This chain coordinates the LLM for the specific QA task
+if 'qa_chain' not in st.session_state:
+    st.session_state.qa_chain = load_qa_chain(st.session_state.llm, chain_type="stuff")
+
 # Upload a PDF file
 pdf_file = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
 
@@ -54,10 +62,11 @@ if pdf_file:
 
     if user_question:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-        docs = st.session_state.knowledge_base.similarity_search(user_question, 3)
+        relevant_docs = st.session_state.knowledge_base.similarity_search(user_question, 3)
 
-        llm = ChatOpenAI(model_name='gpt-3.5-turbo')
-        chain = load_qa_chain(llm, chain_type="stuff")
-        answer = chain.run(input_documents=docs, question=user_question)
+        # Uncomment if you want to see "relevant_docs" content
+        # st.write("Array of relevant documents:")
+        # st.write(relevant_docs)
 
+        answer = st.session_state.qa_chain.run(input_documents=relevant_docs, question=user_question)
         st.write(answer)
