@@ -15,19 +15,19 @@ load_dotenv()
 st.set_page_config('PDFChatBot')
 st.header("Ask questions about your PDF")
 
-# Initialize global embeddings model 
-if 'embeddings' not in st.session_state: 
-    st.session_state.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+# Initialize global embeddings model
+if 'embedding_model' not in st.session_state: 
+    st.session_state.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
 # Initialize global knowledge base
 if 'knowledge_base' not in st.session_state:
     st.session_state.knowledge_base = None
 
 # Upload a PDF file
-pdf_obj = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
+pdf_file = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
 
 @st.cache_resource
-def create_embeddings(pdf):
+def create_knowledge_base(pdf):
     # Read the PDF and extract text
     pdf_reader = PdfReader(pdf)
     text = "".join(page.extract_text() for page in pdf_reader.pages)
@@ -44,13 +44,13 @@ def create_embeddings(pdf):
     chunks = text_splitter.split_text(text)
 
     # Create embeddings using the specified model from HuggingFace
-    knowledge_base = FAISS.from_texts(chunks, st.session_state.embeddings)
+    knowledge_base = FAISS.from_texts(chunks, st.session_state.embedding_model)
 
     return knowledge_base
 
 # If a PDF file is uploaded
-if pdf_obj:
-    st.session_state.knowledge_base = create_embeddings(pdf_obj)
+if pdf_file:
+    st.session_state.knowledge_base = create_knowledge_base(pdf_file)
     user_question = st.text_area("Ask something about your PDF:")
 
     if user_question:
