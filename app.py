@@ -39,7 +39,6 @@ def create_knowledge_base(pdf):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=800,  # Chunk size
         chunk_overlap=100,  # Overlap between chunks
-        length_function=len
     )
     chunks = text_splitter.split_text(text)
 
