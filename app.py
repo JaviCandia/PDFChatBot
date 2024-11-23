@@ -68,5 +68,5 @@ if pdf_file:
         # st.write("Array of relevant documents:")
         # st.write(relevant_docs)
 
-        answer = st.session_state.qa_chain.run(input_documents=relevant_docs, question=user_question)
-        st.write(answer)
+        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_docs, "question": user_question})        
+        st.write(answer['output_text'])
