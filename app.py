@@ -63,8 +63,9 @@ if pdf_file:
 
     if job_description:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-        
+
         relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_summary_template, 3)
+        
         match_template = f"""
             According to the following candidate CV: {relevant_cv_info}
             and the following job position: {job_description}
