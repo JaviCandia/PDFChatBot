@@ -12,8 +12,8 @@ from langchain_openai import ChatOpenAI
 load_dotenv()
 
 # Streamlit app configuration
-st.set_page_config('PDFChatBot')
-st.header("Ask questions about your PDF")
+st.set_page_config('CV Scanner MVP')
+st.header("CV Scanner MVP")
 
 # Initialize global embeddings model
 if 'embedding_model' not in st.session_state: 
@@ -32,7 +32,7 @@ if 'qa_chain' not in st.session_state:
     st.session_state.qa_chain = load_qa_chain(st.session_state.llm, chain_type="stuff")
 
 # Upload a PDF file
-pdf_file = st.file_uploader("Upload your PDF", type="pdf", on_change=st.cache_resource.clear)
+pdf_file = st.file_uploader("Upload your CV", type="pdf", on_change=st.cache_resource.clear)
 
 @st.cache_resource
 def create_knowledge_base(pdf):
@@ -65,7 +65,7 @@ if pdf_file:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
         relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_summary_template, 3)
-        
+
         match_template = f"""
             According to the following candidate CV: {relevant_cv_info}
             and the following job position: {job_description}
