@@ -58,15 +58,34 @@ def create_knowledge_base(pdf):
 # If a PDF file is uploaded
 if pdf_file:
     st.session_state.knowledge_base = create_knowledge_base(pdf_file)
-    user_question = st.text_area("Ask something about your PDF:")
+    job_description = st.text_area("Provide the job description:")
+    cv_summary_template = "Please generate a summary of the provided candidate, highlighting the skills"
 
-    if user_question:
+    if job_description:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-        relevant_docs = st.session_state.knowledge_base.similarity_search(user_question, 3)
+        
+        relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_summary_template, 3)
+        match_template = f"""
+            According to the following candidate CV: {relevant_cv_info}
+            and the following job position: {job_description}
+
+            Please give me a list of the candidate's main skills and experiences.
+
+            Then give me a list of skills that the candidate can cover in the job position.
+            If there's nothing related please just indicate that in one bullet like
+            * No skills related to the job position
+
+            Also a list of differences between the candidate's skills and the job position.
+
+            At the end, put this: match: 0-100%
+            which will indicate the match that the candidate makes with the job.
+            Please use 0% when the job position has nothing to do with or is even in a different area than the candidate's.
+        """
+
 
         # Uncomment if you want to see "relevant_docs" content
         # st.write("Array of relevant documents:")
         # st.write(relevant_docs)
 
-        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_docs, "question": user_question})        
+        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_cv_info, "question": match_template})        
         st.write(answer['output_text'])
