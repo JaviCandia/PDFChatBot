@@ -1,12 +1,13 @@
-import streamlit as st
 import os
+
+import streamlit as st
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 from langchain.chains.question_answering import load_qa_chain
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI
+from langchain.schema import Document
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,12 +17,8 @@ st.set_page_config('CV Scanner MVP')
 st.header("CV Scanner MVP")
 
 # Initialize global embeddings model
-if 'embedding_model' not in st.session_state: 
+if 'embedding_model' not in st.session_state:
     st.session_state.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-
-# Initialize global knowledge base
-if 'knowledge_base' not in st.session_state:
-    st.session_state.knowledge_base = None
 
 # Preinitialize the LLM
 if 'llm' not in st.session_state:
@@ -35,58 +32,44 @@ if 'qa_chain' not in st.session_state:
 pdf_file = st.file_uploader("Upload your CV", type="pdf", on_change=st.cache_resource.clear)
 
 @st.cache_resource
-def create_knowledge_base(pdf):
-    # Read the PDF and extract text
+def create_document(pdf):
     pdf_reader = PdfReader(pdf)
     text = "".join(page.extract_text() for page in pdf_reader.pages)
 
     # Filter content: remove blank lines
     text = "\n".join(line for line in text.split("\n") if line.strip())
 
-    # Split text into smaller chunks
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=800,  # Chunk size
-        chunk_overlap=100,  # Overlap between chunks
-    )
-    chunks = text_splitter.split_text(text)
-
-    # Create embeddings using the specified model from HuggingFace
-    knowledge_base = FAISS.from_texts(chunks, st.session_state.embedding_model)
-
-    return knowledge_base
+    # Create a Document instance with the full text
+    document = Document(page_content=text, metadata={})
+    return [document]
 
 # If a PDF file is uploaded
 if pdf_file:
-    st.session_state.knowledge_base = create_knowledge_base(pdf_file)
+    documents = create_document(pdf_file)
     job_description = st.text_area("Provide the job description:")
-    cv_similarity_prompt = "Please generate a summary of the provided candidate, highlighting the skills"
 
     if job_description:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
-        relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_similarity_prompt, 7)
-
         match_prompt_template = f"""
-            According to the following relevant CV info: {relevant_cv_info}
-            and the following job position: {job_description}
+            Based on the provided CV information: {documents}
+            and the job position details: {job_description},
 
-            Please give me a list of the candidate's main skills and experiences.
+            Please perform the following tasks:
 
-            Then give me a list of skills that fit the job position.
-            If there's nothing related please just indicate that in one bullet like
-            * There are no skills that fit the job position
+            1. **List the Candidate's Main Skills and Experiences**:
+            - Identify and enumerate the primary skills and experiences mentioned in the CV.
 
-            Also a list of differences between the candidate's skills and the skills required by the job position.
+            2. **Match Skills to Job Position**:
+            - Provide a list of skills from the candidate's CV that directly fit the job position.
+            - If there are no relevant skills, indicate with a single bullet:
+                * There are no skills that fit the job position.
 
-            At the end, put this: match: 0-100%
-            which will indicate the match that the candidate makes with the job.
-            Please use 0% when the job position has nothing to do with or is even in a different area than the candidate's.
+            4. **Match Score: 0-100%**
+            - Provide a match score from 0% to 100% indicating how well the candidate fits the job position.
+            - Use 0% if the job position has nothing to do with the candidate's skills or is in a completely different field.
+            - Justify the match score by highlighting key similarities or discrepancies between the candidate's qualifications and the job requirements.
         """
 
-
-        # Uncomment if you want to see "relevant_docs" content
-        # st.write("Array of relevant documents:")
-        # st.write(relevant_docs)
-
-        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_cv_info, "question": match_prompt_template})        
+        answer = st.session_state.qa_chain.invoke(input={"input_documents": documents, "question": match_prompt_template})
         st.write(answer['output_text'])
