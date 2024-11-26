@@ -59,24 +59,24 @@ def create_knowledge_base(pdf):
 if pdf_file:
     st.session_state.knowledge_base = create_knowledge_base(pdf_file)
     job_description = st.text_area("Provide the job description:")
-    cv_summary_template = "Please generate a summary of the provided candidate, highlighting the skills"
+    cv_similarity_prompt = "Please generate a summary of the provided candidate, highlighting the skills"
 
     if job_description:
         os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
-        relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_summary_template, 3)
+        relevant_cv_info = st.session_state.knowledge_base.similarity_search(cv_similarity_prompt, 7)
 
-        match_template = f"""
-            According to the following candidate CV: {relevant_cv_info}
+        match_prompt_template = f"""
+            According to the following relevant CV info: {relevant_cv_info}
             and the following job position: {job_description}
 
             Please give me a list of the candidate's main skills and experiences.
 
-            Then give me a list of skills that the candidate can cover in the job position.
+            Then give me a list of skills that fit the job position.
             If there's nothing related please just indicate that in one bullet like
-            * No skills related to the job position
+            * There are no skills that fit the job position
 
-            Also a list of differences between the candidate's skills and the job position.
+            Also a list of differences between the candidate's skills and the skills required by the job position.
 
             At the end, put this: match: 0-100%
             which will indicate the match that the candidate makes with the job.
@@ -88,5 +88,5 @@ if pdf_file:
         # st.write("Array of relevant documents:")
         # st.write(relevant_docs)
 
-        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_cv_info, "question": match_template})        
+        answer = st.session_state.qa_chain.invoke(input={"input_documents": relevant_cv_info, "question": match_prompt_template})        
         st.write(answer['output_text'])
