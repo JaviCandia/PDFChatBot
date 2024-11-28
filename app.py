@@ -9,7 +9,8 @@ from langchain_openai import ChatOpenAI
 from langchain.schema import Document
 
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+
+from output_parsers import feedback_parser
 
 # Load environment variables from .env file
 load_dotenv()
@@ -51,6 +52,7 @@ if pdf_file:
 
         new_match_prompt = PromptTemplate(
             input_variables=["documents", "job_description"],
+            partial_variables={"format_instructions": feedback_parser.get_format_instructions},
             template="""
                 Based on the provided CV information: {documents}
                 and the job position details: {job_description},
@@ -65,12 +67,27 @@ if pdf_file:
                 - If there are no relevant skills, indicate with a single bullet:
                     * There are no skills that fit the job position.
 
-                4. **Match Score: -right here provide a match score from 0 to 100 indicating how well the candidate fits the job position-**
+                3. **Match Score: -right here provide a match score from 0 to 100 indicating how well the candidate fits the job position-**
                 - Use 0 if the job position has nothing to do with the candidate's skills or is in a completely different field.
                 - Justify the match score by highlighting key similarities or discrepancies between the candidate's qualifications and the job requirements.
+                \n{format_instructions}
             """
         )
 
-        chain = new_match_prompt | st.session_state.llm | StrOutputParser()
+        chain = new_match_prompt | st.session_state.llm | feedback_parser
         res = chain.invoke(input = {"documents": documents, "job_description": job_description})
-        st.write(res)
+
+        st.write("### Mains Skills of the candidate")
+        st.markdown("\n".join([f"- {skill}" for skill in res.main_skills]))
+
+        st.write("### Skills that fit the job position")
+        if res.fit_skills:
+            st.markdown("\n".join([f"- {skill}" for skill in res.fit_skills]))
+        else:
+            st.markdown("- There are no skills that fit the job position")
+
+        st.write(f"### Match Score: {res.match_score}%")
+
+        # Demonstration purposes:
+        # st.write("### Response:")
+        # st.write(res)
