@@ -22,7 +22,7 @@ if 'embedding_model' not in st.session_state:
 
 # Preinitialize the LLM
 if 'llm' not in st.session_state:
-    st.session_state.llm = ChatOpenAI(model_name='gpt-3.5-turbo')
+    st.session_state.llm = ChatOpenAI(model_name='gpt-4o-mini')
 
 # This chain coordinates the LLM for the specific QA task
 if 'qa_chain' not in st.session_state:
@@ -60,7 +60,7 @@ if pdf_file:
             1. **List the Candidate's Main Skills and Experiences**:
             - Identify and enumerate the primary skills and experiences mentioned in the CV.
 
-            2. **Match Skills to Job Position**:
+            2. **Candidate Skills that fit Job Position**:
             - Provide a list of skills from the candidate's CV that directly fit the job position.
             - If there are no relevant skills, indicate with a single bullet:
                 * There are no skills that fit the job position.
