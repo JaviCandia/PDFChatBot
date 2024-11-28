@@ -91,7 +91,7 @@ if pdf_file:
         st.markdown("\n".join([f"- {skill}" for skill in res.main_skills]))
 
 
-        # Dios que haz que acabe esto ya
+        # Dios haz que acabe esto ya
         st.write("## Role Match")
         for role_match in res.role_matches:
             st.write(f"#### Name: {role_match.rol_name}")
