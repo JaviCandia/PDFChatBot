@@ -34,6 +34,9 @@ pdf_file = st.file_uploader(
     "Upload your CV", type="pdf", on_change=st.cache_resource.clear
 )
 
+# Load roles from JSON file
+with open("roles-light.json", "r", encoding="utf-8") as file:
+    roles = json.load(file)
 
 @st.cache_resource
 def create_document(pdf):
@@ -46,10 +49,6 @@ def create_document(pdf):
     # Create a Document instance with the full text
     document = Document(page_content=text, metadata={})
     return [document]
-
-# Load roles from JSON file
-with open("roles-light.json", "r", encoding="utf-8") as file:
-    roles = json.load(file)
 
 # If a PDF file is uploaded
 if pdf_file:
