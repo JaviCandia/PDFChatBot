@@ -5,7 +5,7 @@
     "capability": "Frontend",
     "location": "Monterrey",
     "rolName": "Senior Node JS Engineer",
-    "rolDescription": "Design and implement highly interactive, scalable web/mobile apps and prototype. Implement and integrate software platforms through the REST API as well as familiarity with NodeJS framework (e.g., Express, Nest). Create high-quality technical documentation and engage in problem-solving. Lead team and perform code-review for peers and juniors."
+    "description": "Design and implement highly interactive, scalable web/mobile apps and prototype. Implement and integrate software platforms through the REST API as well as familiarity with NodeJS framework (e.g., Express, Nest). Create high-quality technical documentation and engage in problem-solving. Lead team and perform code-review for peers and juniors."
   },
   {
     "positionId": "2612528",
@@ -22,6 +22,22 @@
     "capability": "UX/UI",
     "location": "Monterrey",
     "description": "Accountable for prototype work and other software engineering solutions that create an optimized user experience. Translate design concepts to prototype solutions as quickly and tangibly as possible, with a balanced understanding of technical feasibility implications and design intent."
+  },
+  {
+    "positionId": "5403086",
+    "rolName": "Fullstack Dev",
+    "level": "9-10",
+    "capability": "Frontend",
+    "location": "Monterrey",
+    "description": "Design and develop efficient software solutions. Your day-to-day activities will involve writing clean and maintainable code, collaborating with cross-functional teams to develop new features, and ensuring seamless integration with other IT components. You should have advanced proficiency in React.js and Python Software Development, and beginner proficiency in Python Django. Design and develop software solutions using React.js and Python Software Development. Collaborate with cross-functional teams to develop new features and ensure seamless integration. Write clean and maintainable code to optimize software performance. Conduct rigorous testing and troubleshooting to identify and resolve software issues. Provide technical guidance and support to project teams throughout the development lifecycle."
+  },
+  {
+    "positionId": "5462862",
+    "rolName": "Project Lead",
+    "level": "9-10",
+    "capability": "Frontend",
+    "location": "Monterrey",
+    "description": "Client & Project: We are seeking for a new talent to join the 52971395 where you will have the opportunity to collaborate in the '9940465703 - Op Model - P&E IT' project. Responsibilities: As an Application Developer, you will be responsible for designing, building, and configuring applications to meet business process and application requirements. You will be expected to be a subject matter expert (SME), collaborate and manage the team to perform, and make team decisions. Additionally, you will engage with multiple teams and contribute to key decisions, as well as provide solutions to problems for your immediate team and across multiple teams. Expert proficiency in Java, Spring Boot Microservices (RESTful Web Services is required). Intermediate proficiency in Linux/Unix Desktop Management and Unix Shell Scripting are recommended. Knowledge of DevOps tools - Jenkins, GitHub, Nexus and Pivotal Cloud Foundry is good-to-have as its extensively used in the Client environment. In addition to Java Full stack development, resources are required to have experience in Front end development using Angular / Javascript."
   },
   {
     "positionId": "6137401",

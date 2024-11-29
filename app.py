@@ -10,7 +10,7 @@ from langchain.schema import Document
 
 from langchain_core.prompts import PromptTemplate
 
-from output_parsers import feedback_parser, RoleMatch
+from output_parsers import feedback_parser
 
 # Load environment variables from .env file
 load_dotenv()
@@ -48,7 +48,7 @@ def create_document(pdf):
     return [document]
 
 # Load roles from JSON file
-with open("roles.json", "r", encoding="utf-8") as file:
+with open("roles-light.json", "r", encoding="utf-8") as file:
     roles = json.load(file)
 
 # If a PDF file is uploaded
@@ -69,17 +69,20 @@ if pdf_file:
 
                 Please perform the following tasks:
 
-                1. **List the Candidate's Main Skills and Experiences**:
-                - Identify and enumerate the 5 primary skills and experiences mentioned in the CV.
+                1. *Understand the Candidate CV*
+                - Determine the candidate's level based on their overall experience: Junior, Mid or Senior.
 
-                2. **Role Match**:
+                2. **List the Candidate's Main Skills and Experiences**:
+                - Identify and enumerate the 5 primary skills and experiences.
+
+                3. **Role Match**:
                 - For each role, provide:
                     - The role name.
-                    - A list of skills from the candidate's CV (not the main skills) that fit the role (5 maximum).
+                    - Identify a list of relevant skills from candidate's CV that directly fit the role (5 maximum).
                     - If there are no relevant skills, indicate with a single bullet:
                         * There are no skills that fit the job position.
                     - A match score from 0 to 100 indicating how well the candidate fits the role.
-
+                    
                 \n{format_instructions}
             """,
         )
@@ -87,9 +90,11 @@ if pdf_file:
         chain = new_match_prompt | st.session_state.llm | feedback_parser
         res = chain.invoke(input={"documents": documents, "roles": roles})
 
+        st.write("## Candidate Level")
+        st.write(f"- {res.level}")
+
         st.write("## Main Skills of the candidate")
         st.markdown("\n".join([f"- {skill}" for skill in res.main_skills]))
-
 
         # Dios haz que acabe esto ya
         st.write("## Role Match")
