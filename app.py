@@ -110,5 +110,6 @@ if pdf_file:
             st.write(f"**Match Score: {role_match.match_score}%**")
 
         # Demonstration purposes:
+        # res_dict = res.to_dict()
         # st.write("### Response:")
-        # st.write(res)
+        # st.write(res_dict)

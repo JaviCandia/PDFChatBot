@@ -16,6 +16,6 @@ class FeedbackModel(BaseModel):
     role_matches: List[RoleMatch] = Field(description="List of role matches with the candidate")
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"level": self.level,"main_skills": self.main_skills, "role_matches": [role_match.to_dict() for role_match in self.role_matches]}
+        return {"level": self.level, "main_skills": self.main_skills, "role_matches": [role_match.to_dict() for role_match in self.role_matches]}
 
 feedback_parser = PydanticOutputParser(pydantic_object=FeedbackModel)
